@@ -192,10 +192,10 @@ public class SetupServer extends Application {
                     threePointCellNumber = Integer.valueOf(threePointCellText.getText());
                     winningPoint = Integer.valueOf(winingPointText.getText());
                     creationPort = portText1.getText();
-                    String[] args = {creationPort,String.valueOf(gameSpaceSize),String.valueOf(unavailableCellNumber),String.valueOf(twoPointCellNumber),String.valueOf(threePointCellNumber),String.valueOf(winningPoint)};
+                    String[] args = {creationPort, String.valueOf(gameSpaceSize), String.valueOf(unavailableCellNumber), String.valueOf(twoPointCellNumber), String.valueOf(threePointCellNumber), String.valueOf(winningPoint)};
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Server Başlatıldı");
-                    alert.setHeaderText("Çalışan port: "+ creationPort);
+                    alert.setHeaderText("Çalışan port: " + creationPort);
                     alert.showAndWait();
                     primaryStage.close();
                     Server.getInstance().main(args);

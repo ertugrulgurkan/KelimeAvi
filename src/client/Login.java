@@ -22,45 +22,42 @@ import java.net.SocketException;
 import java.util.Optional;
 
 
-
 public class Login extends Application {
 
     private static String ipAddress;
     private static int port;
     private GridPane gridPane = new GridPane();
-    public   BufferedReader bufferedReader;
-    public   BufferedWriter bufferedWriter;
+    public BufferedReader bufferedReader;
+    public BufferedWriter bufferedWriter;
 
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         launch(args);
     }
 
 
     /**
-     *
      * send message to the server
      */
 
-    public synchronized void write(String msg){
+    public synchronized void write(String msg) {
         try {
             bufferedWriter.write(msg + "\n");
             bufferedWriter.flush();
-        } catch(SocketException e){
+        } catch (SocketException e) {
             // Alert window
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText("Connection Error!");
             alert.setContentText("Port Number is not correct or Invalid input!");
             alert.showAndWait();
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
     /**
-     *
      * Initialize Login Stage
      */
 
@@ -73,55 +70,55 @@ public class Login extends Application {
         Text title = new Text("Kelime Avına Hoş Geldin!");
         title.setTextAlignment(TextAlignment.LEFT);
         title.setFill(Color.DARKBLUE);
-        title.setFont(Font.font("Times", FontWeight.BOLD,25));
-        gridPane.add(title,0,0,3,1);
+        title.setFont(Font.font("Times", FontWeight.BOLD, 25));
+        gridPane.add(title, 0, 0, 3, 1);
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(25, 25, 25, 25));
 
         Label label2 = new Label();
         label2.setText("IP Address");
-        label2.setFont(Font.font("Times",FontWeight.NORMAL,18));
-        gridPane.add(label2,1,3,1,1);
+        label2.setFont(Font.font("Times", FontWeight.NORMAL, 18));
+        gridPane.add(label2, 1, 3, 1, 1);
 
         TextField textField2 = new TextField();
-        textField2.setFont(Font.font("Times",FontWeight.NORMAL,18));
+        textField2.setFont(Font.font("Times", FontWeight.NORMAL, 18));
         textField2.setStyle("-fx-background-color: null;" +
                 "-fx-border-width:  0.5;" +
                 "-fx-border-insets: 2;" +
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: black;");
         textField2.setText("10.0.75.1");
-        gridPane.add(textField2,2,3,1,1);
+        gridPane.add(textField2, 2, 3, 1, 1);
 
         Label label3 = new Label();
         label3.setText("Port");
-        label3.setFont(Font.font("Times",FontWeight.NORMAL,18));
-        gridPane.add(label3,1,4,1,1);
+        label3.setFont(Font.font("Times", FontWeight.NORMAL, 18));
+        gridPane.add(label3, 1, 4, 1, 1);
 
         TextField textField3 = new TextField();
-        textField3.setFont(Font.font("Times",FontWeight.NORMAL,18));
+        textField3.setFont(Font.font("Times", FontWeight.NORMAL, 18));
         textField3.setStyle("-fx-background-color: null;" +
                 "-fx-border-width:  0.5;" +
                 "-fx-border-insets: 2;" +
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: black;");
-        gridPane.add(textField3,2,4,1,1);
+        gridPane.add(textField3, 2, 4, 1, 1);
 
         Button button1 = new Button();
         button1.setText("Login");
-        button1.setFont(Font.font("Times",FontWeight.NORMAL,16));
+        button1.setFont(Font.font("Times", FontWeight.NORMAL, 16));
 
         Button button2 = new Button();
         button2.setText("Cancel");
-        button2.setFont(Font.font("Times",FontWeight.NORMAL,16));
+        button2.setFont(Font.font("Times", FontWeight.NORMAL, 16));
 
         HBox hBox = new HBox();
         hBox.setSpacing(35);
         hBox.setAlignment(Pos.CENTER_LEFT);
         hBox.getChildren().add(button1);
         hBox.getChildren().add(button2);
-        gridPane.add(hBox,2,6,2,1);
+        gridPane.add(hBox, 2, 6, 2, 1);
 
 
         /**
@@ -136,8 +133,7 @@ public class Login extends Application {
                 try {
                     port = Integer.valueOf(textField3.getText());
                     ipAddress = textField2.getText();
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     System.out.println("exception successful");
                 }
                 try {
@@ -145,7 +141,7 @@ public class Login extends Application {
                     bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
                     bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
 
-                    MessageListener.getInstance().init(socket,bufferedWriter,bufferedReader);
+                    MessageListener.getInstance().init(socket, bufferedWriter, bufferedReader);
                     MessageListener.getInstance().messageListener.start();
 
                     // listen to the feedback from the server
@@ -177,7 +173,7 @@ public class Login extends Application {
                                     alert.getButtonTypes().setAll(confirm);
                                     Optional<ButtonType> result = alert.showAndWait();
                                 }
-                            }catch(Exception e){
+                            } catch (Exception e) {
                                 // Alert window
                                 Alert alert = new Alert(Alert.AlertType.ERROR);
                                 alert.setTitle("Error Message");
@@ -190,7 +186,7 @@ public class Login extends Application {
                         }
                     });
                     primaryStage.close();
-                }catch(SocketException e){
+                } catch (SocketException e) {
                     // Alert window
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error Message");
@@ -199,8 +195,7 @@ public class Login extends Application {
                     alert.showAndWait();
                     textField2.setText("");
                     textField3.setText("");
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error Message");
                     alert.setHeaderText("Connection Error or Input Error!");
@@ -226,7 +221,7 @@ public class Login extends Application {
             }
         });
 
-        Scene scene = new Scene(gridPane,400,250);
+        Scene scene = new Scene(gridPane, 400, 250);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

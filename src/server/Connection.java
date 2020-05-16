@@ -97,7 +97,7 @@ public class Connection extends Thread {
         //else if (op.equals("watch")) {
         //    watchGame();
         //}
-       else if (op.equals("remove")) {
+        else if (op.equals("remove")) {
             remove();
         }
         return res + "\n";
@@ -179,7 +179,7 @@ public class Connection extends Thread {
         String name = Server.Player2.get(clientSocket);
         String result = parts[1];
         String Inviter = parts[2];
-        Server.ResponseCounter++;
+        Server.responseCounter++;
         System.out.println(Inviter);
         System.out.println(name);
 
@@ -293,45 +293,8 @@ public class Connection extends Thread {
     }
 
 
-    /**
-     * Watch mode
-     */
-
-    //public void watchGame() {
-    //    String res = "invalid message!";
-    //    if (!Server.Start) {
-    //        res = "nowatch|no game started";
-    //        PrintStream outDic = null;
-    //        try {
-    //            outDic = new PrintStream(clientSocket.getOutputStream());
-    //        } catch (Exception e) {
-    //            e.printStackTrace();
-    //        }
-    //        outDic.println(res);
-    //    } else {
-    //        String name = Server.Player2.get(clientSocket);
-    //        Server.watchPlayer.put(name, clientSocket);
-    //        res = "watch" + "|" + Server.turnName + "|" + name;
-    //        PrintStream outDic = null;
-    //        try {
-    //            outDic = new PrintStream(clientSocket.getOutputStream());
-    //        } catch (Exception e) {
-    //            e.printStackTrace();
-    //        }
-    //        outDic.println(res);
-    //        updateWatchGame();
-    //    }
-    //}
-
     public String fillGameBoard(String[] parts) {
         String res = parts[0] + "|" + Server.gameSpaceSize + "|" + Server.unavailableCellNumber + "|" + Server.twoPointCellNumber + "|" + Server.threePointCellNumber;
-        //PrintStream outDic = null;
-        //try {
-        //    outDic = new PrintStream(clientSocket.getOutputStream());
-        //} catch (Exception e) {
-        //    e.printStackTrace();
-        //}
-        //outDic.println(res);
         return res;
     }
 
@@ -344,10 +307,10 @@ public class Connection extends Thread {
     public String newLetterCoords(String[] parts) {
         String res = "";
         res = "letterCoords|" + parts[1] + "|";
-        for (int i=2; i<parts.length-1; i++){
+        for (int i = 2; i < parts.length - 1; i++) {
             res += parts[i];
         }
-        letterLength = Integer.valueOf(parts[parts.length-1]);
+        letterLength = Integer.valueOf(parts[parts.length - 1]);
         for (String key : Server.nowPlayer.keySet()) {
             Socket player;
             player = Server.Player.get(key);
@@ -372,13 +335,14 @@ public class Connection extends Thread {
         }
         return res;
     }
+
     /**
      * Add a character
      */
 
     public String addChar(String[] parts) {
         String res = "invalid message!";
-        Server.PassCounter = 0;
+        Server.passCounter = 0;
         String name = Server.Player2.get(clientSocket);
         if (Server.turnName != name) {
             res = "notturn|not your turn|" + parts[1] + "|" + parts[2];
@@ -447,22 +411,20 @@ public class Connection extends Thread {
         String word = parts[1];
         String result = parts[2];
         int sco = 0;
-        Server.AllVoter.add(voter);
+        Server.AllValidate.add(voter);
 
         if (result.equals("true")) {
-            Server.Voter.add(voter);
+            Server.Validate.add(voter);
         }
-        if (Server.AllVoter.size() == Server.nowPlayer.size()) {
-            if (Server.Voter.size() == Server.nowPlayer.size()) {
+        if (Server.AllValidate.size() == Server.nowPlayer.size()) {
+            if (Server.Validate.size() == Server.nowPlayer.size()) {
                 sco = score(result);
             }
             updateOneScore(name, sco);
             updatePlayer();
-            if (sco >= Server.winningPoint){
-                GameOver();
-            }
-            Server.AllVoter.clear();
-            Server.Voter.clear();
+
+            Server.AllValidate.clear();
+            Server.Validate.clear();
         }
     }
 
@@ -486,9 +448,9 @@ public class Connection extends Thread {
      */
 
     public String pass() {
-        Server.PassCounter++;
+        Server.passCounter++;
         String res = "invalid message!";
-        if (Server.PassCounter != Server.nowPlayer.size()) {
+        if (Server.passCounter != Server.nowPlayer.size()) {
             updatePlayer();
         } else {
             Server.Start = false;
@@ -507,12 +469,12 @@ public class Connection extends Thread {
         Server.nowPlayer.clear();
         Server.watchPlayer.clear();
         Server.Score.clear();
-        Server.Voter.clear();
-        Server.AllVoter.clear();
+        Server.Validate.clear();
+        Server.AllValidate.clear();
         // Server.counter = 0;
-        Server.Number = 0;
-        Server.ResponseCounter = 0;
-        Server.PassCounter = 0;
+        Server.number = 0;
+        Server.responseCounter = 0;
+        Server.passCounter = 0;
         Server.turnName = null;
         for (int i = 0; i < 10000; i++) {
             Server.nameList[i] = null;
@@ -635,6 +597,9 @@ public class Connection extends Thread {
             }
             outDic.println(res);
         }
+        if (now >= Server.winningPoint) {
+            GameOver();
+        }
 
     }
 
@@ -723,33 +688,6 @@ public class Connection extends Thread {
 
 
     /**
-     * Update watch mode
-     */
-
-    public void updateWatchGame() {
-        for (int i = 0; i < 20; i++)
-            for (int j = 0; j < 20; j++) {
-                if (Server.game[i][j] != "") {
-                    String res = "updateGame"
-                            + "|"
-                            + Integer.toString(i)
-                            + "|"
-                            + Integer.toString(j)
-                            + "|"
-                            + String.valueOf(Server.game[i][j]);
-                    PrintStream outDic = null;
-                    try {
-                        outDic = new PrintStream(clientSocket.getOutputStream());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    outDic.println(res);
-                }
-            }
-    }
-
-
-    /**
      * Update players
      */
 
@@ -820,10 +758,10 @@ public class Connection extends Thread {
     public void taketurn() {
         String name = null;
         int count = Server.nowPlayer.size();
-        int i = Server.Number % count;
+        int i = Server.number % count;
         name = Server.nameList[i];
         Server.turnName = name;
-        Server.Number++;
+        Server.number++;
     }
 
     public static String getRandomValues(int size, int bound) {

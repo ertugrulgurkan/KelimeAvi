@@ -44,7 +44,6 @@ public class Game {
     public static List<Coords> letterCoords = new ArrayList<>();
 
 
-
     /**
      * Initialize socket
      */
@@ -193,7 +192,7 @@ public class Game {
         play.getChildren().add(subGridPane);
 
 
-        quit.setText("Quit");
+        quit.setText("Çıkış");
         quit.setFont(Font.font("Times", FontWeight.NORMAL, 16));
 
         HBox buttons = new HBox();
@@ -265,7 +264,6 @@ public class Game {
         wholePage.getChildren().add(label);
         wholePage.getChildren().add(area);
         gridPane.add(wholePage, 1, 0, 5, 20);
-
 
 
         // Labels Lengtgh Grid
@@ -483,8 +481,6 @@ public class Game {
         });
 
 
-
-
         submit.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -498,16 +494,16 @@ public class Game {
                     }
                     for (Coords c : letterCoords) {
                         if (labels[c.getX()][c.getY()].getStyle().contains("#f1ff00"))
-                            multi=multi*2;
+                            multi = multi * 2;
                         else if (labels[c.getX()][c.getY()].getStyle().contains("#2aff30"))
-                            multi=multi*3;
+                            multi = multi * 3;
                     }
                     String msg1 = "submit|" + chooseWords + "|" + multi;
                     System.out.println(msg1);
                     String substring = "";
                     if (letterCords != "")
-                    substring = letterCords.substring(0, letterCords.length() - 1);
-                    write("newLetterCoords|" + chooseWords + "|" + substring+ "|" + newLetterCoords.size());
+                        substring = letterCords.substring(0, letterCords.length() - 1);
+                    write("newLetterCoords|" + chooseWords + "|" + substring + "|" + newLetterCoords.size());
                     write(msg1);
                 } else {
                     // Alert window
@@ -541,12 +537,12 @@ public class Game {
             public void handle(MouseEvent event) {
                 // Alert window
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Quit");
-                alert.setHeaderText("Are you sure to quit the game?");
+                alert.setTitle("Çık");
+                alert.setHeaderText("Oyundan çıkmak istediğinize emin misiniz?");
                 alert.setContentText(null);
 
-                ButtonType accept = new ButtonType("Yes");
-                ButtonType deny = new ButtonType("Cancel");
+                ButtonType accept = new ButtonType("Evet");
+                ButtonType deny = new ButtonType("Hayır");
                 alert.getButtonTypes().setAll(accept, deny);
 
                 Optional<ButtonType> result = alert.showAndWait();

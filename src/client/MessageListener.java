@@ -129,7 +129,7 @@ public class MessageListener extends Thread {
                     IdentifyUsername.getInstance().closeStage();
                     MainPage.getInstance().init(socket, bufferedWriter, bufferedReader);
                     MainPage.getInstance().step2();
-                    MainPage.getInstance().label.setText(parts[1] + "adlı oyuncunun ana ekranı");
+                    MainPage.getInstance().label.setText(parts[1] + " ana ekran");
                 }
             });
         } else if (op.equals("updatePlayer")) {
@@ -382,9 +382,8 @@ public class MessageListener extends Thread {
 
                 String turnName = parts[1];
                 Game.getInstance().init(socket, bufferedWriter, bufferedReader, gameSpaceSize, unavailableCellNumber, twoPointCellNumber, threePointCellNumber, unavailableCoords, twoPointCoords, threePointCoords, randomLetter, letterIndex);
-                // Game game = new Game();
                 Game.getInstance().startAGame();
-                Game.getInstance().display.setText(turnName + "'adlı oyuncunun sırası"); // abc's turn to play--- update abc
+                Game.getInstance().display.setText(turnName + " adlı oyuncunun sırası"); // abc's turn to play--- update abc
                 Game.getInstance().label.setText(parts[3] + " adlı oyuncunun ekranı");
                 if (parts[2].equals("close")) {
                     Game.getInstance().submit.setDisable(true);

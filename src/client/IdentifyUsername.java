@@ -29,7 +29,7 @@ public class IdentifyUsername {
      * Initialize socket
      */
 
-    public void init(Socket socket, BufferedWriter writer, BufferedReader reader){
+    public void init(Socket socket, BufferedWriter writer, BufferedReader reader) {
         this.socket = socket;
         this.bufferedReader = reader;
         this.bufferedWriter = writer;
@@ -46,12 +46,12 @@ public class IdentifyUsername {
      * Close the stage
      */
 
-    public void closeStage(){
+    public void closeStage() {
         this.stage.close();
     }
 
-    public static IdentifyUsername getInstance(){
-        if(identifyUsername == null){
+    public static IdentifyUsername getInstance() {
+        if (identifyUsername == null) {
             identifyUsername = new IdentifyUsername();
         }
         return identifyUsername;
@@ -62,20 +62,20 @@ public class IdentifyUsername {
      * Initialize IdentifyUsername Stage
      */
 
-    public void Identify(){
+    public void Identify() {
         stage.setTitle("Kullanıcı Adı Belirle");
         gridPane.setAlignment(Pos.CENTER);
 
         Text title = new Text("Kullanıcı Adınızı Giriniz:");
         title.setTextAlignment(TextAlignment.LEFT);
-        title.setFont(Font.font("Times", FontWeight.BOLD,25));
+        title.setFont(Font.font("Times", FontWeight.BOLD, 25));
         title.setFill(Color.DARKBLUE);
 
         Label label1 = new Label();
         label1.setText("Kullanıcı Adı");
-        label1.setFont(Font.font("Times",FontWeight.NORMAL,18));
+        label1.setFont(Font.font("Times", FontWeight.NORMAL, 18));
 
-        textField1.setFont(Font.font("Times",FontWeight.NORMAL,18));
+        textField1.setFont(Font.font("Times", FontWeight.NORMAL, 18));
         textField1.setStyle("-fx-background-color: null;" +
                 "-fx-border-width:  0.5;" +
                 "-fx-border-insets: 2;" +
@@ -90,7 +90,7 @@ public class IdentifyUsername {
 
         validate.setText("Onayla");
         validate.setAlignment(Pos.CENTER);
-        validate.setFont(Font.font("Times",FontWeight.NORMAL,16));
+        validate.setFont(Font.font("Times", FontWeight.NORMAL, 16));
 
         VBox vBox = new VBox();
         vBox.setSpacing(30);
@@ -98,9 +98,9 @@ public class IdentifyUsername {
         vBox.getChildren().add(title);
         vBox.getChildren().add(hBox);
         vBox.getChildren().add(validate);
-        gridPane.add(vBox,0,0,3,3);
+        gridPane.add(vBox, 0, 0, 3, 3);
 
-        Scene scene = new Scene(gridPane,400,200);
+        Scene scene = new Scene(gridPane, 400, 200);
         stage.setScene(scene);
         stage.show();
     }
