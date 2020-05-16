@@ -109,7 +109,7 @@ public class MainPage {
      */
 
     public void step2(){
-        stage.setTitle("Main Page");
+        stage.setTitle("Ana Ekran");
         gridPane.setAlignment(Pos.CENTER);
 
         label.setFont(Font.font("Times", FontWeight.BOLD, 30));
@@ -118,32 +118,32 @@ public class MainPage {
         gridPane.add(label,3,0,2,1);
 
         Label label1 = new Label();
-        label1.setText("Online Users");
+        label1.setText("Online Kullanıcılar");
         label1.setFont(Font.font("Times", FontWeight.BLACK, 23));
         gridPane.add(label1,2,1,1,1);
 
         Label label2 = new Label();
-        label2.setText("User Status");
+        label2.setText("Kullanıcı Durumları");
         label2.setFont(Font.font("Times", FontWeight.BLACK, 23));
         gridPane.add(label2,6,1,1,1);
 
-        invite.setText("Invite");
+        invite.setText("Davet Et");
         invite.setFont(Font.font("Times",FontWeight.NORMAL,16));
 
-        start.setText("Start");
+        start.setText("Başlat");
         start.setFont(Font.font("Times",FontWeight.NORMAL,16));
 
-        refresh.setText("Refresh");
+        refresh.setText("Yenile");
         refresh.setFont(Font.font("Times",FontWeight.NORMAL,16));
 
-        quit.setText("Quit");
+        quit.setText("Çıkış");
         quit.setFont(Font.font("Times",FontWeight.NORMAL,16));
 
         VBox vBox = new VBox();
         vBox.setSpacing(50);
         vBox.setAlignment(Pos.CENTER);
-        vBox.getChildren().add(invite);
         vBox.getChildren().add(start);
+        vBox.getChildren().add(invite);
         vBox.getChildren().add(refresh);
         vBox.getChildren().add(quit);
         gridPane.add(vBox,4,5,2,1);
@@ -192,8 +192,8 @@ public class MainPage {
                 else{
                     // Alert window
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Warning");
-                    alert.setHeaderText("You don't invite anyone");
+                    alert.setTitle("Uyarı");
+                    alert.setHeaderText("Kimseyi Davet Etmedin");
                     ButtonType confirm = new ButtonType("OK");
                     alert.getButtonTypes().setAll(confirm);
                     alert.showAndWait();
@@ -212,7 +212,7 @@ public class MainPage {
             public void handle(MouseEvent event) {
                 write("fillGameBoard|");
                 write("fillRandomValues|");
-                write("startstart|");
+                write("startGame|");
             }
         });
 

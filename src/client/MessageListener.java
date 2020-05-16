@@ -30,6 +30,7 @@ public class MessageListener extends Thread {
     public static List<Coords> threePointCoords = new ArrayList<>();
     public static Coords randomLetter = new Coords();
     public static int letterIndex = 0;
+    public static List<Coords> enteredLetterCoords = new ArrayList<>();
 
 
     /**
@@ -128,25 +129,27 @@ public class MessageListener extends Thread {
                     IdentifyUsername.getInstance().closeStage();
                     MainPage.getInstance().init(socket, bufferedWriter, bufferedReader);
                     MainPage.getInstance().step2();
-                    MainPage.getInstance().label.setText(parts[1] + "'s Main Page");
+                    MainPage.getInstance().label.setText(parts[1] + "adlı oyuncunun ana ekranı");
                 }
             });
         } else if (op.equals("updatePlayer")) {
             updatePlayer(parts);
         } else if (op.equals("notinvite")) {
             notinvite();
-        } else if (op.equals("startstart")) {
+        } else if (op.equals("startGame")) {
             start(parts);
         } else if (op.equals("fillGameBoard")) {
             fillGameBoard(parts);
         } else if (op.equals("fillRandomValues")) {
             fillRandomValues(parts);
+        } else if (op.equals("letterCoords")) {
+            letterCoords(parts);
         } else if (op.equals("invite")) {
             invite(parts);
         } else if (op.equals("accept")) {
             inviteAccept(parts);
         } else if (op.equals("notstart")) {
-            notstart(parts);
+            notStart(parts);
         } else if (op.equals("notturn")) {
 
         } else if (op.equals("deny")) {
@@ -271,11 +274,12 @@ public class MessageListener extends Thread {
                 Game.getInstance().display.setText(turnName + "'s turn to play"); // abc's turn to play--- update abc
 
                 if (parts[2].equals("close")) {
-                    //Game.getInstance().submit.setDisable(true);
+                    Game.getInstance().submit.setDisable(true);
                     Game.getInstance().pass.setDisable(true);
                     Game.getInstance().clearTheWord.setDisable(true);
                     Game.getInstance().sendTheWord.setDisable(true);
                     Game.getInstance().wordField.setDisable(true);
+                    Game.getInstance().wordField.setText("");
                 } else if (parts[2].equals("open")) {
                     Game.getInstance().submit.setDisable(true);
                 }
@@ -301,7 +305,7 @@ public class MessageListener extends Thread {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Invite");
                 alert.setHeaderText(inviter + " adlı oyuncu seni oyuna davet ediyor!");
-                alert.setContentText("Oyuna katılmak istiyor musun");
+                alert.setContentText("Oyuna katılmak istiyor musun?");
 
                 ButtonType accept = new ButtonType("Kabul Et");
                 ButtonType deny = new ButtonType("Reddet");
@@ -354,8 +358,8 @@ public class MessageListener extends Thread {
 
             public void run() {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Error Message");
-                alert.setHeaderText("No one joins the game");
+                alert.setTitle("Hata");
+                alert.setHeaderText("Kimse oyuna katılmıyor");
 
                 ButtonType confirm = new ButtonType("OK");
                 alert.getButtonTypes().setAll(confirm);
@@ -380,14 +384,15 @@ public class MessageListener extends Thread {
                 Game.getInstance().init(socket, bufferedWriter, bufferedReader, gameSpaceSize, unavailableCellNumber, twoPointCellNumber, threePointCellNumber, unavailableCoords, twoPointCoords, threePointCoords, randomLetter, letterIndex);
                 // Game game = new Game();
                 Game.getInstance().startAGame();
-                Game.getInstance().display.setText(turnName + "'s turn to play"); // abc's turn to play--- update abc
+                Game.getInstance().display.setText(turnName + "'adlı oyuncunun sırası"); // abc's turn to play--- update abc
                 Game.getInstance().label.setText(parts[3] + " adlı oyuncunun ekranı");
                 if (parts[2].equals("close")) {
-                    //Game.getInstance().submit.setDisable(true);
+                    Game.getInstance().submit.setDisable(true);
                     Game.getInstance().pass.setDisable(true);
                     Game.getInstance().clearTheWord.setDisable(true);
                     Game.getInstance().sendTheWord.setDisable(true);
                     Game.getInstance().wordField.setDisable(true);
+                    Game.getInstance().wordField.setText("");
                 } else if (parts[2].equals("open")) {
                     Game.getInstance().submit.setDisable(true);
                     Game.getInstance().pass.setDisable(false);
@@ -465,12 +470,34 @@ public class MessageListener extends Thread {
         });
     }
 
+    public static void letterCoords(String[] parts) {
+        Platform.runLater(new Runnable() {
+            @Override
+
+            public void run() {
+                enteredLetterCoords.clear();
+                String word = parts[1];
+                String[] split = parts[2].split("-");
+                for (int i = 0; i < split.length; i++) {
+                    String[] coords = split[i].split(",");
+                    Coords c = new Coords(Integer.valueOf(coords[0]), Integer.valueOf(coords[1]));
+                    enteredLetterCoords.add(c);
+                }
+                if (!isWordValid(word)) {
+                    for (Coords c : enteredLetterCoords) {
+                        Game.getInstance().labels[c.getX()][c.getY()].setText("");
+                    }
+                }
+            }
+        });
+
+    }
 
     /**
      * Error message during the process of start a game
      */
 
-    public static void notstart(String[] parts) {
+    public static void notStart(String[] parts) {
 
         String s = parts[1];
 
@@ -478,9 +505,9 @@ public class MessageListener extends Thread {
             @Override
             public void run() {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Warning Message");
-                alert.setHeaderText("You can't start a game");
-                alert.setContentText("A game has been started.");
+                alert.setTitle("Uyarı");
+                alert.setHeaderText("Oyunu Başlatamazsınız");
+                alert.setContentText("Oyun Zaten Başladı");
                 alert.showAndWait();
             }
         });
@@ -500,32 +527,12 @@ public class MessageListener extends Thread {
 
             public void run() {
                 MessageListener.getInstance().init(socket, bufferedWriter, bufferedReader);
-                //todo
-                //burada baş harfi silmemeli onun kontrolünü yap
-                //for (int i = Integer.valueOf(parts[3]); i <= Integer.valueOf(parts[4]); i++) {
-                //    for (int j = Integer.valueOf(parts[5]); j <= Integer.valueOf(parts[6]); j++) {
-                //        Game.getInstance().labels[i][j].setStyle("-fx-background-color: #fcff1f;" +
-                //                "-fx-border-width:  0.2;" +
-                //                "-fx-border-insets: 1;" +
-                //                "-fx-border-radius: 5;" +
-                //                "-fx-border-color: black;");
-                //    }
-                //}
                 boolean wordValid = isWordValid(word);
 
                 if (wordValid) {
-                    MessageListener.getInstance().write("wordValidation|" + word + "|agree");
+                    MessageListener.getInstance().write("wordValidation|" + word + "|true");
                 } else {
-                    MessageListener.getInstance().write("wordValidation|" + word + "|disagree");
-                    //todo bu newlettersı servera götür diğer yerlerde de güncellenmesini sağla
-                    for (Coords c : Game.getInstance().newLetterCoords) {
-                        Game.getInstance().labels[c.getX()][c.getY()].setText("");
-                    }
-                    //for (int i = Integer.valueOf(parts[3]); i <= Integer.valueOf(parts[5]); i++) {
-                    //    for (int j = Integer.valueOf(parts[4]); j <= Integer.valueOf(parts[6]); j++) {
-                    //        Game.getInstance().labels[i][j].setText("");
-                    //    }
-                    //}
+                    MessageListener.getInstance().write("wordValidation|" + word + "|false");
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setTitle("Hata!");
                     alert.setHeaderText("Kelime mevcut değil!");
@@ -533,8 +540,6 @@ public class MessageListener extends Thread {
                     alert.getButtonTypes().setAll(confirm);
                     alert.showAndWait();
                 }
-                ObservableList<String> observableList = FXCollections.observableArrayList("", "");
-                Game.getInstance().listView.setItems(observableList);
             }
         });
     }
@@ -586,9 +591,9 @@ public class MessageListener extends Thread {
             public void run() {
                 // Alert window
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Ranking!");
-                alert.setHeaderText("The winner is " + parts[1]);
-                alert.setContentText("The score is " + parts[2]);
+                alert.setTitle("Sıralama");
+                alert.setHeaderText("Kazanan Oyuncu: " + parts[1]);
+                alert.setContentText("Skoru: " + parts[2]);
 
                 ButtonType confirm = new ButtonType("OK");
                 alert.getButtonTypes().setAll(confirm);

@@ -28,6 +28,7 @@ public class SetupServer extends Application {
     private static int twoPointCellNumber;
     private static int threePointCellNumber;
     private static String creationPort;
+    private static int winningPoint;
 
     private GridPane gridPane = new GridPane();
     public BufferedReader bufferedReader;
@@ -189,8 +190,9 @@ public class SetupServer extends Application {
                     unavailableCellNumber = Integer.valueOf(unavailableBlockCountText.getText());
                     twoPointCellNumber = Integer.valueOf(twoPointCellText.getText());
                     threePointCellNumber = Integer.valueOf(threePointCellText.getText());
+                    winningPoint = Integer.valueOf(winingPointText.getText());
                     creationPort = portText1.getText();
-                    String[] args = {creationPort,String.valueOf(gameSpaceSize),String.valueOf(unavailableCellNumber),String.valueOf(twoPointCellNumber),String.valueOf(threePointCellNumber)};
+                    String[] args = {creationPort,String.valueOf(gameSpaceSize),String.valueOf(unavailableCellNumber),String.valueOf(twoPointCellNumber),String.valueOf(threePointCellNumber),String.valueOf(winningPoint)};
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Server Başlatıldı");
                     alert.setHeaderText("Çalışan port: "+ creationPort);

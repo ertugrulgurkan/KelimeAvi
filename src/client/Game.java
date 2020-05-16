@@ -40,8 +40,9 @@ public class Game {
     public List<Coords> threePointCoords = new ArrayList<>();
     public Coords randomLetter = new Coords();
     public int randomIndex;
-    public static List<Integer> newLetters = new ArrayList<>();
     public static List<Coords> newLetterCoords = new ArrayList<>();
+    public static List<Coords> letterCoords = new ArrayList<>();
+
 
 
     /**
@@ -266,6 +267,7 @@ public class Game {
         gridPane.add(wholePage, 1, 0, 5, 20);
 
 
+
         // Labels Lengtgh Grid
         for (int i = 0; i < labels.length; i++) {
             for (int j = 0; j < labels[i].length; j++) {
@@ -274,7 +276,20 @@ public class Game {
                 labels[i][j].setFont(Font.font("Times", FontPosture.REGULAR, 20));
                 labels[i][j].setMinSize(30, 30);
                 labels[i][j].setAlignment(Pos.CENTER);
-                Coords coords = new Coords(i, j);
+                subGridPane.add(labels[i][j], j + 1, i + 1, 1, 1);
+            }
+        }
+
+
+        ///initialize random
+        for (int i = 0; i < alphabet.length; i++) {
+            alphabet[i] = (char) ('A' + i);
+        }
+        labels[randomLetter.getX()][randomLetter.getY()].setText(String.valueOf(alphabet[randomIndex]));
+
+
+        for (int i = 0; i < labels.length; i++) {
+            for (int j = 0; j < labels[i].length; j++) {
                 int finalI = i;
                 int finalJ = j;
                 Coords coords1 = unavailableCoords.stream().
@@ -287,7 +302,7 @@ public class Game {
                         filter(p -> p.getX() == finalI && p.getY() == finalJ).
                         findAny().orElse(null);
                 // Bonus grid style
-                if (coords1 != null) { //buraya random degerler gelecek
+                if (coords1 != null && labels[i][j].getText().equals("")) { //buraya random degerler gelecek
                     labels[i][j].setStyle("-fx-background-color: #000;" +
                             "-fx-border-width:  0.2;" +
                             "-fx-border-insets: 1;" +
@@ -312,17 +327,8 @@ public class Game {
                             "-fx-border-radius: 5;" +
                             "-fx-border-color: black;");
                 }
-                subGridPane.add(labels[i][j], j + 1, i + 1, 1, 1);
             }
         }
-
-
-        ///initialize random
-        for (int i = 0; i < alphabet.length; i++) {
-            alphabet[i] = (char) ('A' + i);
-        }
-        labels[randomLetter.getX()][randomLetter.getY()].setText(String.valueOf(alphabet[randomIndex]));
-
 
         /**
          *
@@ -338,8 +344,8 @@ public class Game {
                     @Override
                     public void handle(MouseEvent event) {
                         if (!wordField.getText().equals("")) {
-                            newLetters.clear();
                             newLetterCoords.clear();
+                            letterCoords.clear();
                             String text = wordField.getText();
                             char[] chars = text.toCharArray();
                             boolean isEmpty = true;
@@ -352,18 +358,18 @@ public class Game {
                                         if (labels[finalI + k][finalJ].getText().equals(String.valueOf(chars[k]))) {
                                             isMatch = true;
                                         } else {
-                                            newLetters.add(k);
                                             newLetterCoords.add(new Coords(finalI + k, finalJ));
                                         }
+                                        letterCoords.add(new Coords(finalI + k, finalJ));
                                         if (labels[finalI + k][finalJ].getStyle().contains("background-color: #000"))
                                             isEmpty = false;
                                     } else {
                                         if (labels[finalI][finalJ + k].getText().equals(String.valueOf(chars[k])) && !labels[finalI][finalJ + k].getStyle().contains("background-color: #000")) {
                                             isMatch = true;
                                         } else {
-                                            newLetters.add(k);
                                             newLetterCoords.add(new Coords(finalI, finalJ + k));
                                         }
+                                        letterCoords.add(new Coords(finalI, finalJ + k));
                                         if (labels[finalI][finalJ + k].getStyle().contains("background-color: #000"))
                                             isEmpty = false;
                                     }
@@ -477,15 +483,6 @@ public class Game {
         });
 
 
-        //}
-        //else{
-        //    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        //    alert.setTitle("Hata!");
-        //    alert.setHeaderText("Geçerli bir kelime girmediniz.");
-        //    ButtonType confirm = new ButtonType("OK");
-        //    alert.getButtonTypes().setAll(confirm);
-        //    alert.showAndWait();
-        //}
 
 
         submit.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -495,13 +492,22 @@ public class Game {
                 String chooseWords = wordField.getText();
                 int multi = 1;
                 if (!chooseWords.equals("")) {
-                    if ((position_x == 0 || position_x == 19) && (position_y == 0 || position_y == 19)) {
-                        multi = 2;
+                    String letterCords = "";
+                    for (Coords c : newLetterCoords) {
+                        letterCords += c.toString() + "-";
                     }
-                    position = fistLetterX + "|" + fistLetterY + "|" + lastLetterX + "|" + lastLetterY;
-                    //// choose a word first, then write this word to the server
-                    String msg1 = "submit|" + chooseWords + "|" + multi + "|" + position;
+                    for (Coords c : letterCoords) {
+                        if (labels[c.getX()][c.getY()].getStyle().contains("#f1ff00"))
+                            multi=multi*2;
+                        else if (labels[c.getX()][c.getY()].getStyle().contains("#2aff30"))
+                            multi=multi*3;
+                    }
+                    String msg1 = "submit|" + chooseWords + "|" + multi;
                     System.out.println(msg1);
+                    String substring = "";
+                    if (letterCords != "")
+                    substring = letterCords.substring(0, letterCords.length() - 1);
+                    write("newLetterCoords|" + chooseWords + "|" + substring+ "|" + newLetterCoords.size());
                     write(msg1);
                 } else {
                     // Alert window

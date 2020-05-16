@@ -63,16 +63,16 @@ public class IdentifyUsername {
      */
 
     public void Identify(){
-        stage.setTitle("Identify Username");
+        stage.setTitle("Kullanıcı Adı Belirle");
         gridPane.setAlignment(Pos.CENTER);
 
-        Text title = new Text("Please Enter your username:");
+        Text title = new Text("Kullanıcı Adınızı Giriniz:");
         title.setTextAlignment(TextAlignment.LEFT);
         title.setFont(Font.font("Times", FontWeight.BOLD,25));
         title.setFill(Color.DARKBLUE);
 
         Label label1 = new Label();
-        label1.setText("UserName");
+        label1.setText("Kullanıcı Adı");
         label1.setFont(Font.font("Times",FontWeight.NORMAL,18));
 
         textField1.setFont(Font.font("Times",FontWeight.NORMAL,18));
@@ -88,7 +88,7 @@ public class IdentifyUsername {
         hBox.getChildren().add(label1);
         hBox.getChildren().add(textField1);
 
-        validate.setText("Validate");
+        validate.setText("Onayla");
         validate.setAlignment(Pos.CENTER);
         validate.setFont(Font.font("Times",FontWeight.NORMAL,16));
 

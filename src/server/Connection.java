@@ -10,7 +10,7 @@ public class Connection extends Thread {
     private Scanner in;
     private PrintStream out;
     private static int multi = 1;
-
+    private static int letterLength = 0;
 
     /**
      * A constructor that can transform socket as a parameter.
@@ -62,10 +62,11 @@ public class Connection extends Thread {
         String op = parts[0];
         if (op.equals("fillGameBoard")) {
             res = fillGameBoard(parts);
-        }
-        else if (op.equals("fillRandomValues")) {
+        } else if (op.equals("fillRandomValues")) {
             res = fillRandomValues(parts);
-        }else if (op.equals("validate")) {
+        } else if (op.equals("newLetterCoords")) {
+            res = newLetterCoords(parts);
+        } else if (op.equals("validate")) {
             res = valide(parts, clientSocket);
         } else if (op.equals("position")) {
             res = addChar(parts);
@@ -79,8 +80,8 @@ public class Connection extends Thread {
             }
         } else if (op.equals("inviteResponse")) {
             inviteRes(parts);
-        } else if (op.equals("startstart")) {
-            StartGame();
+        } else if (op.equals("startGame")) {
+            startGame();
         } else if (op.equals("submit")) {
             System.out.println(command);
             submit(parts);
@@ -89,13 +90,14 @@ public class Connection extends Thread {
         } else if (op.equals("pass")) {
             res = pass();
         } else if (op.equals("quit")) {
-
             GameOver();
         } else if (op.equals("updateOnePlayer")) {
             res = updateOnePlayer();
-        } else if (op.equals("watch")) {
-            watchGame();
-        } else if (op.equals("remove")) {
+        }
+        //else if (op.equals("watch")) {
+        //    watchGame();
+        //}
+       else if (op.equals("remove")) {
             remove();
         }
         return res + "\n";
@@ -217,7 +219,7 @@ public class Connection extends Thread {
      * Start a game
      */
 
-    public void StartGame() {
+    public void startGame() {
         String res = "invalid message!";
         if (Server.Start == false) {
             String name;
@@ -237,7 +239,7 @@ public class Connection extends Thread {
             namelist();
             initialScore();
             taketurn();
-            res = "startstart|" + Server.turnName;
+            res = "startGame|" + Server.turnName;
             for (String key : Server.nowPlayer.keySet()) {
                 String res2;
                 if (key.equals(Server.turnName)) {
@@ -295,34 +297,34 @@ public class Connection extends Thread {
      * Watch mode
      */
 
-    public void watchGame() {
-        String res = "invalid message!";
-        if (!Server.Start) {
-            res = "nowatch|no game started";
-            PrintStream outDic = null;
-            try {
-                outDic = new PrintStream(clientSocket.getOutputStream());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            outDic.println(res);
-        } else {
-            String name = Server.Player2.get(clientSocket);
-            Server.watchPlayer.put(name, clientSocket);
-            res = "watch" + "|" + Server.turnName + "|" + name;
-            PrintStream outDic = null;
-            try {
-                outDic = new PrintStream(clientSocket.getOutputStream());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            outDic.println(res);
-            updateWatchGame();
-        }
-    }
+    //public void watchGame() {
+    //    String res = "invalid message!";
+    //    if (!Server.Start) {
+    //        res = "nowatch|no game started";
+    //        PrintStream outDic = null;
+    //        try {
+    //            outDic = new PrintStream(clientSocket.getOutputStream());
+    //        } catch (Exception e) {
+    //            e.printStackTrace();
+    //        }
+    //        outDic.println(res);
+    //    } else {
+    //        String name = Server.Player2.get(clientSocket);
+    //        Server.watchPlayer.put(name, clientSocket);
+    //        res = "watch" + "|" + Server.turnName + "|" + name;
+    //        PrintStream outDic = null;
+    //        try {
+    //            outDic = new PrintStream(clientSocket.getOutputStream());
+    //        } catch (Exception e) {
+    //            e.printStackTrace();
+    //        }
+    //        outDic.println(res);
+    //        updateWatchGame();
+    //    }
+    //}
 
     public String fillGameBoard(String[] parts) {
-        String res = parts[0] + "|" + Server.gameSpaceSize + "|" +  Server.unavailableCellNumber + "|" + Server.twoPointCellNumber + "|" + Server.threePointCellNumber;
+        String res = parts[0] + "|" + Server.gameSpaceSize + "|" + Server.unavailableCellNumber + "|" + Server.twoPointCellNumber + "|" + Server.threePointCellNumber;
         //PrintStream outDic = null;
         //try {
         //    outDic = new PrintStream(clientSocket.getOutputStream());
@@ -332,9 +334,42 @@ public class Connection extends Thread {
         //outDic.println(res);
         return res;
     }
+
     public String fillRandomValues(String[] parts) {
         String res = parts[0];
-        res = res + "|" + Server.initializingLetter.toString() + "|" +  Server.unavailableCells + "|" + Server.twoPointCells + "|" + Server.threePointCells;
+        res = res + "|" + Server.initializingLetter.toString() + "|" + Server.unavailableCells + "|" + Server.twoPointCells + "|" + Server.threePointCells;
+        return res;
+    }
+
+    public String newLetterCoords(String[] parts) {
+        String res = "";
+        res = "letterCoords|" + parts[1] + "|";
+        for (int i=2; i<parts.length-1; i++){
+            res += parts[i];
+        }
+        letterLength = Integer.valueOf(parts[parts.length-1]);
+        for (String key : Server.nowPlayer.keySet()) {
+            Socket player;
+            player = Server.Player.get(key);
+            PrintStream outDic = null;
+            try {
+                outDic = new PrintStream(player.getOutputStream());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            outDic.println(res);
+        }
+        for (String key : Server.watchPlayer.keySet()) {
+            Socket player;
+            player = Server.Player.get(key);
+            PrintStream outDic = null;
+            try {
+                outDic = new PrintStream(player.getOutputStream());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            outDic.println(res);
+        }
         return res;
     }
     /**
@@ -366,12 +401,12 @@ public class Connection extends Thread {
         String name = Server.Player2.get(clientSocket);
         String word = parts[1];
         multi = Integer.valueOf(parts[2]);
-        String pos = parts[3] + "|" + parts[4] + "|" + parts[5] + "|" + parts[6] + "|";
+        //String pos = parts[3] + "|" + parts[4] + "|" + parts[5] + "|" + parts[6] + "|";
         System.out.println("the multi" + multi);
         String res = "vote|"
                 + name
                 + "|"
-                + word + "|" + pos;
+                + word;
 
         for (String key : Server.nowPlayer.keySet()) {
             Socket player;
@@ -388,7 +423,7 @@ public class Connection extends Thread {
             String res2 = "watchmode|"
                     + name
                     + "|"
-                    + word + "|" + pos;
+                    + word;
             Socket player;
             player = Server.Player.get(key);
             PrintStream outDic = null;
@@ -414,15 +449,18 @@ public class Connection extends Thread {
         int sco = 0;
         Server.AllVoter.add(voter);
 
-        if (result.equals("agree")) {
+        if (result.equals("true")) {
             Server.Voter.add(voter);
         }
         if (Server.AllVoter.size() == Server.nowPlayer.size()) {
             if (Server.Voter.size() == Server.nowPlayer.size()) {
-                sco = score(word, result);
+                sco = score(result);
             }
             updateOneScore(name, sco);
             updatePlayer();
+            if (sco >= Server.winningPoint){
+                GameOver();
+            }
             Server.AllVoter.clear();
             Server.Voter.clear();
         }
@@ -430,13 +468,13 @@ public class Connection extends Thread {
 
 
     /**
-     * Calculate score for wach turn
+     * Calculate score
      */
 
-    public int score(String word, String result) {
+    public int score(String result) {
         int sco = 0;
-        if (result.equals("agree")) {
-            sco = multi * word.length();
+        if (result.equals("true")) {
+            sco = multi * letterLength;
         }
         return sco;
     }
@@ -788,13 +826,12 @@ public class Connection extends Thread {
         Server.Number++;
     }
 
-    public static String getRandomValues (int size ,int bound){
-        Set<Integer> x =  new LinkedHashSet<Integer>();
-        Set<Integer> y =  new LinkedHashSet<Integer>();
-        String res="";
+    public static String getRandomValues(int size, int bound) {
+        Set<Integer> x = new LinkedHashSet<Integer>();
+        Set<Integer> y = new LinkedHashSet<Integer>();
+        String res = "";
         Random rnd = new Random();
-        while (x.size() < size || y.size() < size)
-        {
+        while (x.size() < size || y.size() < size) {
             Integer next = rnd.nextInt(bound);
             Integer next2 = rnd.nextInt(bound);
             if (x.size() < size)

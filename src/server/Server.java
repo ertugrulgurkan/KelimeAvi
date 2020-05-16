@@ -28,6 +28,7 @@ public class Server {
     public static int unavailableCellNumber=0;
     public static int twoPointCellNumber=0;
     public static int threePointCellNumber=0;
+    public static int winningPoint=9999999;
     public static String unavailableCells="";
     public static String twoPointCells="";
     public static String threePointCells="";
@@ -80,6 +81,7 @@ public class Server {
         unavailableCellNumber = Integer.valueOf(args[2]);
         twoPointCellNumber = Integer.valueOf(args[3]);
         threePointCellNumber = Integer.valueOf(args[4]);
+        winningPoint = Integer.valueOf(args[5]);
         game = new String[gameSpaceSize][gameSpaceSize];
         for(int i = 0;i < gameSpaceSize;i++)
             for(int j = 0;j < gameSpaceSize;j++)
