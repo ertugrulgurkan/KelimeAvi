@@ -18,6 +18,7 @@ public class Server {
     public static boolean Start = false;
     public static String[][] game = new String[20][20];
     //public static int counter=0;
+    public static String words="";
     public static int number = 0;
     public static int responseCounter = 0;
     public static int passCounter = 0;

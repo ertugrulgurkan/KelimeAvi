@@ -31,6 +31,7 @@ public class MessageListener extends Thread {
     public static Coords randomLetter = new Coords();
     public static int letterIndex = 0;
     public static List<Coords> enteredLetterCoords = new ArrayList<>();
+    public static String usedWords = "";
 
 
     /**
@@ -142,7 +143,10 @@ public class MessageListener extends Thread {
             fillGameBoard(parts);
         } else if (op.equals("fillRandomValues")) {
             fillRandomValues(parts);
-        } else if (op.equals("letterCoords")) {
+        }
+        else if (op.equals("words")) {
+            checkUsedWords(parts);
+        }else if (op.equals("letterCoords")) {
             letterCoords(parts);
         } else if (op.equals("invite")) {
             invite(parts);
@@ -154,8 +158,8 @@ public class MessageListener extends Thread {
 
         } else if (op.equals("deny")) {
             inviteDeny(parts);
-        } else if (op.equals("vote")) {
-            vote(parts);
+        } else if (op.equals("submitWord")) {
+            submitWord(parts);
         } else if (op.equals("updateGame")) {
             updateGame(parts);
         } else if (op.equals("updateOneScore")) {
@@ -517,7 +521,7 @@ public class MessageListener extends Thread {
      * Vote for the chosen word
      */
 
-    public static void vote(String[] parts) {
+    public static void submitWord(String[] parts) {
 
         String name = parts[1];
         String word = parts[2];
@@ -534,11 +538,12 @@ public class MessageListener extends Thread {
                     MessageListener.getInstance().write("wordValidation|" + word + "|false");
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setTitle("Hata!");
-                    alert.setHeaderText("Kelime mevcut değil!");
+                    alert.setHeaderText("Kelime mevcut değil ya da oyun tahtasında kullanıldı!");
                     ButtonType confirm = new ButtonType("OK");
                     alert.getButtonTypes().setAll(confirm);
                     alert.showAndWait();
                 }
+                MessageListener.getInstance().write("newWord|" + word);
             }
         });
     }
@@ -624,7 +629,14 @@ public class MessageListener extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if (usedWords.contains(word))
+            isValid = false;
 
         return isValid;
     }
+    public static void checkUsedWords(String[] parts) {
+        String words = parts[1];
+        usedWords = words;
+    }
+
 }

@@ -66,6 +66,8 @@ public class Connection extends Thread {
             res = fillRandomValues(parts);
         } else if (op.equals("newLetterCoords")) {
             res = newLetterCoords(parts);
+        } else if (op.equals("newWord")) {
+            res = newWord(parts);
         } else if (op.equals("validate")) {
             res = valide(parts, clientSocket);
         } else if (op.equals("position")) {
@@ -335,6 +337,13 @@ public class Connection extends Thread {
         }
         return res;
     }
+    public String newWord(String[] parts) {
+        String res = "";
+        Server.words += parts[1] + "-";
+        res = "words|" + Server.words;
+        return res;
+    }
+
 
     /**
      * Add a character
@@ -367,7 +376,7 @@ public class Connection extends Thread {
         multi = Integer.valueOf(parts[2]);
         //String pos = parts[3] + "|" + parts[4] + "|" + parts[5] + "|" + parts[6] + "|";
         System.out.println("the multi" + multi);
-        String res = "vote|"
+        String res = "submitWord|"
                 + name
                 + "|"
                 + word;
@@ -406,15 +415,15 @@ public class Connection extends Thread {
      */
 
     public void wordValidation(String[] parts) {
-        String voter = Server.Player2.get(clientSocket);
+        String player = Server.Player2.get(clientSocket);
         String name = Server.turnName;
         String word = parts[1];
         String result = parts[2];
         int sco = 0;
-        Server.AllValidate.add(voter);
+        Server.AllValidate.add(player);
 
         if (result.equals("true")) {
-            Server.Validate.add(voter);
+            Server.Validate.add(player);
         }
         if (Server.AllValidate.size() == Server.nowPlayer.size()) {
             if (Server.Validate.size() == Server.nowPlayer.size()) {
