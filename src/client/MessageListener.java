@@ -81,7 +81,6 @@ public class MessageListener extends Thread {
      */
 
     @Override
-
     public void run() {
         while (true) {
             try {
@@ -115,9 +114,9 @@ public class MessageListener extends Thread {
                 public void run() {
                     // Alert window
                     Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setTitle("Warning Message");
-                    alert.setHeaderText("Invalid Username!");
-                    alert.setContentText("The username has already existed!");
+                    alert.setTitle("Uyarı");
+                    alert.setHeaderText("Geçersiz Kullancı Adı!");
+                    alert.setContentText("Kullanıcı sistemde mevcut");
                     alert.showAndWait();
                     IdentifyUsername.getInstance().textField1.setText("");
                 }
@@ -519,7 +518,7 @@ public class MessageListener extends Thread {
 
 
     /**
-     * Vote for the chosen word
+     * chosen word
      */
 
     public static void submitWord(String[] parts) {

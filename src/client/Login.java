@@ -106,11 +106,11 @@ public class Login extends Application {
         gridPane.add(textField3, 2, 4, 1, 1);
 
         Button button1 = new Button();
-        button1.setText("Login");
+        button1.setText("Giriş");
         button1.setFont(Font.font("Times", FontWeight.NORMAL, 16));
 
         Button button2 = new Button();
-        button2.setText("Cancel");
+        button2.setText("Çıkış");
         button2.setFont(Font.font("Times", FontWeight.NORMAL, 16));
 
         HBox hBox = new HBox();
