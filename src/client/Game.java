@@ -31,10 +31,11 @@ public class Game {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     public Socket socket;
-    private int gameSpaceSize;
+    public int gameSpaceSize;
     public int unavailableCellNumber;
     public int twoPointCellNumber;
     public int threePointCellNumber;
+    public int winningPoint;
     public List<Coords> unavailableCoords = new ArrayList<>();
     public List<Coords> twoPointCoords = new ArrayList<>();
     public List<Coords> threePointCoords = new ArrayList<>();
@@ -54,7 +55,7 @@ public class Game {
         this.bufferedWriter = writer;
     }
 
-    public void init(Socket socket, BufferedWriter writer, BufferedReader reader, int gameSpaceSize, int unavailableCellNumber, int twoPointCellNumber, int threePointCellNumber, List<Coords> unavailableCoords, List<Coords> twoPointCoords, List<Coords> threePointCoords, Coords randomLetter, int randomIndex) {
+    public void init(Socket socket, BufferedWriter writer, BufferedReader reader, int gameSpaceSize, int unavailableCellNumber, int twoPointCellNumber, int threePointCellNumber, List<Coords> unavailableCoords, List<Coords> twoPointCoords, List<Coords> threePointCoords, Coords randomLetter, int randomIndex, int winningPoint) {
         this.socket = socket;
         this.bufferedReader = reader;
         this.bufferedWriter = writer;
@@ -67,6 +68,7 @@ public class Game {
         this.threePointCoords = threePointCoords;
         this.randomLetter = randomLetter;
         this.randomIndex = randomIndex;
+        this.winningPoint = winningPoint;
     }
 
 
@@ -113,25 +115,12 @@ public class Game {
 
     private static int position_x;
     private static int position_y;
-    private static int HsentPosition_xL;
-    private static int HsentPosition_xR;
-    private static int HsentPosition_yL;
-    private static int HsentPosition_yR;
-    private static int VsentPosition_xL;
-    private static int VsentPosition_xR;
-    private static int VsentPosition_yL;
-    private static int VsentPosition_yR;
+
 
     private static int fistLetterX;
     private static int fistLetterY;
     private static int lastLetterX;
     private static int lastLetterY;
-
-    private static String Hword;
-    private static String Vword;
-    private static String finalA;
-    private static int round = 1;
-    private boolean success = false;
 
     private GridPane gridPane = new GridPane();
     private GridPane subGridPane = new GridPane();
@@ -139,11 +128,14 @@ public class Game {
     private GridPane secondRowDisplay = new GridPane();
     public TextArea textArea = new TextArea();
     public Stage stage = new Stage();
-    public ObservableList<String> observableList;
-    public ListView<String> listView = new ListView<String>();
 
     public Label[][] labels;
     public Label display = new Label();
+    public Label gameSpaceS = new Label();
+    public Label unavailableCellN = new Label();
+    public Label twoPointCellN = new Label();
+    public Label threePointCellN = new Label();
+    public Label winningPointN = new Label();
     public Button submit = new Button();
     public Button pass = new Button();
     public Button quit = new Button();
@@ -157,9 +149,7 @@ public class Game {
         }
     };
     public boolean isLeftToRight;
-    public boolean isSent = false;
     public char[] alphabet = new char[26];
-    Random rd = new Random();
 
 
     /**
@@ -192,17 +182,36 @@ public class Game {
         play.getChildren().add(subGridPane);
 
 
-        quit.setText("Çıkış");
-        quit.setFont(Font.font("Times", FontWeight.NORMAL, 16));
 
-        HBox buttons = new HBox();
-        buttons.setSpacing(50);
-        buttons.setAlignment(Pos.CENTER);
-        buttons.getChildren().add(quit);
-        gridPane.add(buttons, 3, 13, 3, 1);
+        gameSpaceS.setText("Oyun Alanı :" + gameSpaceSize + "X"+gameSpaceSize);
+        gameSpaceS.setFont(Font.font("Times", FontWeight.NORMAL, 16));
+        winningPointN.setText("Kazanma Puanı :" +winningPoint);
+        winningPointN.setFont(Font.font("Times", FontWeight.NORMAL, 16));
+        unavailableCellN.setText("Kullanılamaz Alan: " + unavailableCellNumber);
+        unavailableCellN.setFont(Font.font("Times", FontWeight.NORMAL, 16));
+        twoPointCellN.setText("2x: " + twoPointCellNumber);
+        twoPointCellN.setFont(Font.font("Times", FontWeight.NORMAL, 16));
+        threePointCellN.setText("3x: " + threePointCellNumber);
+        threePointCellN.setFont(Font.font("Times", FontWeight.NORMAL, 16));
+
+        VBox gameInfoBox = new VBox();
+        gameInfoBox.setSpacing(10);
+        gameInfoBox.setAlignment(Pos.CENTER_LEFT);
+        gameInfoBox.getChildren().add(gameSpaceS);
+        gameInfoBox.getChildren().add(winningPointN);
+        gameInfoBox.getChildren().add(unavailableCellN);
+        gridPane.add(gameInfoBox, 3, 12, 3, 1);
+
+
+        HBox gameInfoBox2 = new HBox();
+        gameInfoBox2.setSpacing(20);
+        gameInfoBox2.setAlignment(Pos.CENTER_LEFT);
+        gameInfoBox2.getChildren().add(twoPointCellN);
+        gameInfoBox2.getChildren().add(threePointCellN);
+        gridPane.add(gameInfoBox2, 3, 13, 3, 1);
 
         Label score = new Label();
-        score.setText("Players' Score");
+        score.setText("Oyuncu Skorları");
         gridPane.add(score, 3, 8, 1, 1);
         score.setFont(Font.font("Times", FontWeight.SEMI_BOLD, 20));
 
@@ -227,31 +236,42 @@ public class Game {
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: black;");
         wordField.getSelectedText().toUpperCase();
+
         clearTheWord.setText("Temizle");
         clearTheWord.setFont(Font.font("Times", FontWeight.NORMAL, 16));
+
         sendTheWord.setText("Yerleştir");
         sendTheWord.setFont(Font.font("Times", FontWeight.NORMAL, 16));
+
         submit.setText("Gönder");
         submit.setFont(Font.font("Times", FontWeight.NORMAL, 16));
+
+        quit.setText("Çıkış");
+        quit.setFont(Font.font("Times", FontWeight.NORMAL, 16));
+
         HBox hBox2 = new HBox();
         hBox2.setSpacing(15);
         hBox2.setAlignment(Pos.CENTER_LEFT);
         hBox2.getChildren().add(wordField);
         hBox2.getChildren().add(clearTheWord);
-        hBox2.getChildren().add(sendTheWord);
-        hBox2.getChildren().add(submit);
 
-        //gridPane.add(hBox2,3,15,3,1);
-
+        HBox hBox3 = new HBox();
+        hBox3.setSpacing(30);
+        hBox3.setAlignment(Pos.CENTER);
+        hBox3.getChildren().add(sendTheWord);
+        hBox3.getChildren().add(submit);
+        hBox3.getChildren().add(quit);
         VBox displayArea = new VBox();
+
         displayArea.setSpacing(15);
         displayArea.setAlignment(Pos.CENTER_RIGHT);
+        displayArea.getChildren().add(gameInfoBox);
+        displayArea.getChildren().add(gameInfoBox2);
         displayArea.getChildren().add(scoreView);
         displayArea.getChildren().add(firstRowDisplay);
         displayArea.getChildren().add(secondRowDisplay);
-        displayArea.getChildren().add(buttons);
         displayArea.getChildren().add(hBox2);
-
+        displayArea.getChildren().add(hBox3);
         HBox area = new HBox();
         area.setSpacing(60);
         area.setAlignment(Pos.CENTER);
@@ -352,7 +372,7 @@ public class Game {
                                 isEmpty = false;
                             else {
                                 for (int k = 0; k < chars.length; k++) {
-                                    if (!isLeftToRight) { //todo burada çakışan sayısı alınıp puan da hesaplanabilir
+                                    if (!isLeftToRight) {
                                         if (labels[finalI + k][finalJ].getText().equals(String.valueOf(chars[k]))) {
                                             isMatch = true;
                                         } else {

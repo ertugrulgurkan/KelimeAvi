@@ -58,7 +58,7 @@ public class Login extends Application {
 
 
     /**
-     * Initialize Login Stage
+     *  Login Stage
      */
 
     @Override
@@ -146,7 +146,7 @@ public class Login extends Application {
 
                     // listen to the feedback from the server
                     System.out.println("Establish socket successfully");
-                    IdentifyUsername.getInstance().Identify(); // Open IdentifyUsername stage
+                    IdentifyUsername.getInstance().Identify(); // IdentifyUsername stage
 
                     /**
                      *
@@ -166,19 +166,19 @@ public class Login extends Application {
                                     // Alert window
                                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                                     alert.setTitle("Warning!");
-                                    alert.setHeaderText("Please input your username!");
+                                    alert.setHeaderText("Lütfen kullanıcı adınızı giriniz!");
                                     alert.setHeight(50);
                                     alert.setWidth(40);
-                                    ButtonType confirm = new ButtonType("OK");
+                                    ButtonType confirm = new ButtonType("Tamam");
                                     alert.getButtonTypes().setAll(confirm);
                                     Optional<ButtonType> result = alert.showAndWait();
                                 }
                             } catch (Exception e) {
                                 // Alert window
                                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                                alert.setTitle("Error Message");
-                                alert.setHeaderText("Connection Error or Input Error!");
-                                alert.setContentText("Port Number is not correct or Invalid input!");
+                                alert.setTitle("Hata!");
+                                alert.setHeaderText("Bağlantı veya input hatası");
+                                alert.setContentText("Port numarası doğru değil veya geçersiz input");
                                 alert.showAndWait();
                                 textField2.setText("");
                                 textField3.setText("");
@@ -209,8 +209,7 @@ public class Login extends Application {
 
 
         /**
-         *
-         * The action after clicking button Cancel
+         *  Cancel button
          */
 
         button2.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {

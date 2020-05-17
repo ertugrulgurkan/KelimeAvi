@@ -21,30 +21,27 @@ import java.io.*;
 
 public class SetupServer extends Application {
 
-    private static String ipAddress;
-    private static int port;
     private static int gameSpaceSize;
     private static int unavailableCellNumber;
     private static int twoPointCellNumber;
     private static int threePointCellNumber;
     private static String creationPort;
     private static int winningPoint;
-
+    boolean isWinningPointValid = false;
+    boolean isGmeSpaceValid = false;
+    boolean isUnavailableCellValid = false;
+    boolean isTwoPointCellValid = false;
+    boolean isThreePointCellValid = false;
+    boolean isPortValid = false;
     private GridPane gridPane = new GridPane();
-    public BufferedReader bufferedReader;
-    public BufferedWriter bufferedWriter;
 
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    /**
-     * Initialize Setup Server Stage
-     */
 
     @Override
-
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Giriş Ekranı");
         gridPane.setAlignment(Pos.CENTER);
@@ -177,29 +174,114 @@ public class SetupServer extends Application {
         gridPane.add(hBox, 1, 9, 2, 1);
 
 
-        /**
-         *
-         * The action after clicking button Login
-         */
-
         createGameButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 try {
+                    isWinningPointValid = false;
+                    isGmeSpaceValid = false;
+                    isUnavailableCellValid = false;
+                    isTwoPointCellValid = false;
+                    isThreePointCellValid = false;
+                    isPortValid = false;
                     gameSpaceSize = Integer.valueOf(gameSpaceText.getText());
                     unavailableCellNumber = Integer.valueOf(unavailableBlockCountText.getText());
                     twoPointCellNumber = Integer.valueOf(twoPointCellText.getText());
                     threePointCellNumber = Integer.valueOf(threePointCellText.getText());
                     winningPoint = Integer.valueOf(winingPointText.getText());
                     creationPort = portText1.getText();
-                    String[] args = {creationPort, String.valueOf(gameSpaceSize), String.valueOf(unavailableCellNumber), String.valueOf(twoPointCellNumber), String.valueOf(threePointCellNumber), String.valueOf(winningPoint)};
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Server Başlatıldı");
-                    alert.setHeaderText("Çalışan port: " + creationPort);
-                    alert.showAndWait();
-                    primaryStage.close();
-                    Server.getInstance().main(args);
+                    if(winningPoint>=10 && winningPoint<=100){
+                        isWinningPointValid = true;
+                    }
+                    if(gameSpaceSize>=8 && gameSpaceSize<=22){
+                        isGmeSpaceValid = true;
+                    }
+                    if (unavailableCellNumber<=15 && unavailableCellNumber>=0){
+                        isUnavailableCellValid = true;
+                    }
+                    if (twoPointCellNumber<=15 && twoPointCellNumber>=0){
+                        isTwoPointCellValid = true;
+                    }
+                    if (threePointCellNumber<=15 && threePointCellNumber>=0){
+                        isThreePointCellValid = true;
+                    }
+                    if(Integer.valueOf(creationPort) >= 0){
+                        isPortValid = true;
+                    }
+                    if (isWinningPointValid && isGmeSpaceValid && isUnavailableCellValid && isTwoPointCellValid && isThreePointCellValid && isPortValid){
+                        String[] args = {creationPort, String.valueOf(gameSpaceSize), String.valueOf(unavailableCellNumber), String.valueOf(twoPointCellNumber), String.valueOf(threePointCellNumber), String.valueOf(winningPoint)};
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Server Başlatıldı");
+                        alert.setHeaderText("Çalışan port: " + creationPort);
+                        alert.showAndWait();
+                        primaryStage.close();
+                        Server.getInstance().main(args);
+                    }
+                    else if(!(isThreePointCellValid && isTwoPointCellValid)){
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Hata");
+                        alert.setHeaderText("Input Hatası!");
+                        alert.setContentText("x2 veya x3 değerleri geçersiz (0-15 arasında)");
+                        alert.showAndWait();
+                        twoPointCellText.setText("");
+                        threePointCellText.setText("");
+                    }
+                    else if(!isUnavailableCellValid){
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Hata");
+                        alert.setHeaderText("Input Hatası!");
+                        alert.setContentText("Kullanılamaz bölge girdisi geçersiz (0-15 arasında)");
+                        alert.showAndWait();
+                        unavailableBlockCountText.setText("");
+                    }
+                    else if(!isGmeSpaceValid){
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Hata");
+                        alert.setHeaderText("Input Hatası!");
+                        alert.setContentText("Geçerli bir oyun alanı giriniz (8-22 arasında)");
+                        alert.showAndWait();
+                        gameSpaceText.setText("");
+                    }
+                    else if(!isWinningPointValid){
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Hata");
+                        alert.setHeaderText("Input Hatası!");
+                        alert.setContentText("Kazanma puanı geçersiz (10-100 arasında)");
+                        alert.showAndWait();
+                        winingPointText.setText("");
+                    }
+                    else if(!isPortValid){
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Hata");
+                        alert.setHeaderText("Input Hatası!");
+                        alert.setContentText("Port Numarası 0'dan büyük olmak zorunda");
+                        alert.showAndWait();
+                        portText1.setText("");
+                    }
+                    else{
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Hata!");
+                        alert.setHeaderText("input hatası");
+                        alert.setContentText("Geçersiz input");
+                        alert.showAndWait();
+                        gameSpaceText.setText("");
+                        unavailableBlockCountText.setText("");
+                        twoPointCellText.setText("");
+                        threePointCellText.setText("");
+                        winingPointText.setText("");
+                    }
+
                 } catch (Exception e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Hata!");
+                    alert.setHeaderText("input hatası");
+                    alert.setContentText("Geçersiz input");
+                    alert.showAndWait();
+                    gameSpaceText.setText("");
+                    unavailableBlockCountText.setText("");
+                    twoPointCellText.setText("");
+                    threePointCellText.setText("");
+                    winingPointText.setText("");
                     System.out.println("exception successful");
                 }
 
@@ -208,7 +290,6 @@ public class SetupServer extends Application {
 
         exitButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
-
             public void handle(MouseEvent event) {
                 System.exit(0); // Exit the system
             }

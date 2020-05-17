@@ -25,6 +25,7 @@ public class MessageListener extends Thread {
     public static int unavailableCellNumber = 0;
     public static int twoPointCellNumber = 0;
     public static int threePointCellNumber = 0;
+    public static int winningPoint = 0;
     public static List<Coords> unavailableCoords = new ArrayList<>();
     public static List<Coords> twoPointCoords = new ArrayList<>();
     public static List<Coords> threePointCoords = new ArrayList<>();
@@ -143,10 +144,9 @@ public class MessageListener extends Thread {
             fillGameBoard(parts);
         } else if (op.equals("fillRandomValues")) {
             fillRandomValues(parts);
-        }
-        else if (op.equals("words")) {
+        } else if (op.equals("words")) {
             checkUsedWords(parts);
-        }else if (op.equals("letterCoords")) {
+        } else if (op.equals("letterCoords")) {
             letterCoords(parts);
         } else if (op.equals("invite")) {
             invite(parts);
@@ -385,7 +385,7 @@ public class MessageListener extends Thread {
                 MainPage.getInstance().closeStage();
 
                 String turnName = parts[1];
-                Game.getInstance().init(socket, bufferedWriter, bufferedReader, gameSpaceSize, unavailableCellNumber, twoPointCellNumber, threePointCellNumber, unavailableCoords, twoPointCoords, threePointCoords, randomLetter, letterIndex);
+                Game.getInstance().init(socket, bufferedWriter, bufferedReader, gameSpaceSize, unavailableCellNumber, twoPointCellNumber, threePointCellNumber, unavailableCoords, twoPointCoords, threePointCoords, randomLetter, letterIndex,winningPoint);
                 Game.getInstance().startAGame();
                 Game.getInstance().display.setText(turnName + " adlı oyuncunun sırası"); // abc's turn to play--- update abc
                 Game.getInstance().label.setText(parts[3] + " adlı oyuncunun ekranı");
@@ -417,6 +417,7 @@ public class MessageListener extends Thread {
                 unavailableCellNumber = Integer.valueOf(parts[2]);
                 twoPointCellNumber = Integer.valueOf(parts[3]);
                 threePointCellNumber = Integer.valueOf(parts[4]);
+                winningPoint = Integer.valueOf(parts[5]);
             }
         });
     }
@@ -634,6 +635,7 @@ public class MessageListener extends Thread {
 
         return isValid;
     }
+
     public static void checkUsedWords(String[] parts) {
         String words = parts[1];
         usedWords = words;

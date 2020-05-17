@@ -69,7 +69,7 @@ public class Connection extends Thread {
         } else if (op.equals("newWord")) {
             res = newWord(parts);
         } else if (op.equals("validate")) {
-            res = valide(parts, clientSocket);
+            res = validate(parts, clientSocket);
         } else if (op.equals("position")) {
             res = addChar(parts);
         } else if (op.equals("invite")) {
@@ -96,9 +96,9 @@ public class Connection extends Thread {
         } else if (op.equals("updateOnePlayer")) {
             res = updateOnePlayer();
         }
-        //else if (op.equals("watch")) {
-        //    watchGame();
-        //}
+        else if (op.equals("deny")) {
+            res = denyAccept();
+        }
         else if (op.equals("remove")) {
             remove();
         }
@@ -107,10 +107,10 @@ public class Connection extends Thread {
 
 
     /**
-     * Validate whether username is unique or not
+     * Validate username is unique or not
      */
 
-    public String valide(String[] parts, Socket soc) {
+    public String validate(String[] parts, Socket soc) {
         String res = "Name successful|" + parts[1];
 
         if (Server.Player.containsKey(parts[1])) {
@@ -296,7 +296,7 @@ public class Connection extends Thread {
 
 
     public String fillGameBoard(String[] parts) {
-        String res = parts[0] + "|" + Server.gameSpaceSize + "|" + Server.unavailableCellNumber + "|" + Server.twoPointCellNumber + "|" + Server.threePointCellNumber;
+        String res = parts[0] + "|" + Server.gameSpaceSize + "|" + Server.unavailableCellNumber + "|" + Server.twoPointCellNumber + "|" + Server.threePointCellNumber + "|" + Server.winningPoint;
         return res;
     }
 
