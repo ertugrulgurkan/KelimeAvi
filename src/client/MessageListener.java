@@ -32,7 +32,7 @@ public class MessageListener extends Thread {
     public static Coords randomLetter = new Coords();
     public static int letterIndex = 0;
     public static List<Coords> enteredLetterCoords = new ArrayList<>();
-    public static String usedWords = "";
+    public static String [] usedWord = new String[1];
 
 
     /**
@@ -629,15 +629,18 @@ public class MessageListener extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (usedWords.contains(word))
-            isValid = false;
+        for (int i=0; i<usedWord.length ; i++){
+            if (usedWord[i] != null && usedWord[i].equals(word)) {
+                isValid = false;
+            }
+        }
 
         return isValid;
     }
 
     public static void checkUsedWords(String[] parts) {
         String words = parts[1];
-        usedWords = words;
+        usedWord = words.split("-");
     }
 
 }
